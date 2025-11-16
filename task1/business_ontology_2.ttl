@@ -1,0 +1,214 @@
+@prefix : <http://example.org/business#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+<http://example.org/business> a owl:Ontology ;
+    rdfs:label "бизнес-онтология"@ru .
+
+### Классы
+:Company a owl:Class ;
+    rdfs:label "Компания"@ru .
+
+:Bank a owl:Class ;
+    rdfs:subClassOf :Company ;
+    rdfs:label "Банк"@ru .
+
+:Restaurant a owl:Class ;
+    rdfs:subClassOf :Company ;
+    rdfs:label "Ресторан"@ru .
+
+:Employee a owl:Class ;
+    rdfs:label "Сотрудник"@ru .
+
+:Manager a owl:Class ;
+    rdfs:subClassOf :Employee ;
+    rdfs:label "Менеджер"@ru .
+
+:Developer a owl:Class ;
+    rdfs:subClassOf :Employee ;
+    rdfs:label "Разработчик"@ru .
+
+:Chef a owl:Class ;
+    rdfs:subClassOf :Employee ;
+    rdfs:label "Шеф-повар"@ru .
+
+:Teller a owl:Class ;
+    rdfs:subClassOf :Employee ;
+    rdfs:label "Кассир"@ru .
+
+:Product a owl:Class ;
+    rdfs:label "Продукт"@ru .
+
+:Service a owl:Class ;
+    rdfs:subClassOf :Product ;
+    rdfs:label "Услуга"@ru .
+
+:FoodItem a owl:Class ;
+    rdfs:subClassOf :Product ;
+    rdfs:label "Блюдо"@ru .
+
+:Software a owl:Class ;
+    rdfs:subClassOf :Product ;
+    rdfs:label "Программное обеспечение"@ru .
+
+:Department a owl:Class ;
+    rdfs:label "Отдел"@ru .
+
+:IT a owl:Class ;
+    rdfs:subClassOf :Department ;
+    rdfs:label "IT-отдел"@ru .
+
+:Kitchen a owl:Class ;
+    rdfs:subClassOf :Department ;
+    rdfs:label "Кухня"@ru .
+
+### Object properties
+:develops a owl:ObjectProperty ;
+    rdfs:domain :Company ;
+    rdfs:range :Product ;
+    rdfs:label "разрабатывает"@ru ;
+    owl:inverseOf :isDevelopedBy .
+
+:isDevelopedBy a owl:ObjectProperty ;
+    rdfs:domain :Product ;
+    rdfs:range :Company ;
+    rdfs:label "разработано"@ru .
+
+:works_in a owl:ObjectProperty ;
+    rdfs:domain :Employee ;
+    rdfs:range :Department ;
+    rdfs:label "работает в"@ru ;
+    owl:inverseOf :hasEmployee .
+
+:hasEmployee a owl:ObjectProperty ;
+    rdfs:domain :Department ;
+    rdfs:range :Employee ;
+    rdfs:label "имеет сотрудника"@ru .
+
+:manages a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:domain :Employee ;
+    rdfs:range :Department ;
+    rdfs:label "управляет"@ru ;
+    owl:inverseOf :isManagedBy .
+
+:isManagedBy a owl:ObjectProperty, owl:InverseFunctionalProperty ;
+    rdfs:domain :Department ;
+    rdfs:range :Employee ;
+    rdfs:label "управляется"@ru .
+
+:belongs_to a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:domain :Product ;
+    rdfs:range :Company ;
+    rdfs:label "принадлежит"@ru ;
+    owl:inverseOf :hasProduct .
+
+:hasProduct a owl:ObjectProperty, owl:InverseFunctionalProperty ;
+    rdfs:domain :Company ;
+    rdfs:range :Product ;
+    rdfs:label "имеет продукт"@ru .
+
+### Datatype properties
+:name a owl:DatatypeProperty ;
+    rdfs:domain [ a owl:Class ; owl:unionOf ( :Company :Employee :Product :Department ) ] ;
+    rdfs:range rdfs:Literal ;
+    rdfs:label "имя"@ru .
+
+:price a owl:DatatypeProperty ;
+    rdfs:domain :Product ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "цена"@ru .
+
+:position a owl:DatatypeProperty ;
+    rdfs:domain :Employee ;
+    rdfs:range rdfs:Literal ;
+    rdfs:label "должность"@ru .
+
+:location a owl:DatatypeProperty ;
+    rdfs:domain :Department ;
+    rdfs:range rdfs:Literal ;
+    rdfs:label "местоположение"@ru .
+
+### Individuals
+
+:TechSolutions a :Company ;
+    :name "TechSolutions" ;
+    rdfs:label "TechSolutions" ;
+    :hasProduct :MobileApp , :CloudService .
+
+:FoodMaster a :Restaurant ;
+    :name "FoodMaster" ;
+    rdfs:label "FoodMaster" ;
+    :hasProduct :OrganicJuice , :SeasonalSalad .
+
+:CityBank a :Bank ;
+    :name "CityBank" ;
+    rdfs:label "CityBank" ;
+    :hasProduct :BankAccount , :LoanService .
+
+:ITDept a :IT ;
+    :name "IT Department" ;
+    rdfs:label "IT Department" .
+
+:KitchenDept a :Kitchen ;
+    :name "Kitchen" ;
+    rdfs:label "Kitchen" .
+
+:Anna a :Manager ;
+    :name "Анна Петрова"@ru ;
+    :position "Руководитель IT"@ru ;
+    :works_in :ITDept ;
+    :manages :ITDept .
+
+:Ivan a :Developer ;
+    :name "Иван Сидоров"@ru ;
+    :position "Backend-разработчик" ;
+    :works_in :ITDept , :KitchenDept .
+
+:Olga a :Chef ;
+    :name "Ольга Иванова"@ru ;
+    :position "Шеф-повар"@ru ;
+    :works_in :KitchenDept ;
+    :manages :KitchenDept .
+
+:Sergey a :Teller ;
+    :name "Сергей Кузнецов"@ru ;
+    :position "Кассир"@ru ;
+    :works_in :ITDept .
+
+:MobileApp a :Software ;
+    :name "MobileApp" ;
+    :price "1000"^^xsd:decimal ;
+    :belongs_to :TechSolutions ;
+    rdfs:label "Мобильное приложение"@ru .
+
+:CloudService a :Service ;
+    :name "Cloud Hosting" ;
+    :price "5000"^^xsd:decimal ;
+    :belongs_to :TechSolutions ;
+    rdfs:label "Облачный сервис"@ru .
+
+:OrganicJuice a :FoodItem ;
+    :name "Organic Juice" ;
+    :price "5"^^xsd:decimal ;
+    :belongs_to :FoodMaster ;
+    rdfs:label "Органический сок"@ru .
+
+:SeasonalSalad a :FoodItem ;
+    :name "Seasonal Salad" ;
+    :price "8"^^xsd:decimal ;
+    :belongs_to :FoodMaster ;
+    rdfs:label "Сезонный салат"@ru .
+
+:BankAccount a :Service ;
+    :name "Checking Account" ;
+    :price "0"^^xsd:decimal ;
+    :belongs_to :CityBank ;
+    rdfs:label "Текущий счёт"@ru .
+
+:LoanService a :Service ;
+    :name "Personal Loan" ;
+    :price "0"^^xsd:decimal ;
+    :belongs_to :CityBank ;
+    rdfs:label "Персональный кредит"@ru .

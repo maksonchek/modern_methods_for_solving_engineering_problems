@@ -1,0 +1,144 @@
+@prefix : <http://example.org/ont/task3#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix swrl: <http://www.w3.org/2003/11/swrl#> .
+@prefix swrla: <http://swrl.stanford.edu/ontologies/3.3/swrla.owl#> .
+@prefix swrlb: <http://www.w3.org/2003/11/swrlb#> .
+
+:borrower rdf:type swrl:Variable .
+:credit_score rdf:type swrl:Variable .
+:dti_ratio rdf:type swrl:Variable .
+:employment rdf:type swrl:Variable .
+:request rdf:type swrl:Variable .
+:program rdf:type swrl:Variable .
+:criteria rdf:type swrl:Variable .
+:indicator rdf:type swrl:Variable .
+
+[ rdf:type swrl:Imp ;
+  swrla:isRuleEnabled "true"^^xsd:boolean ;
+  rdfs:label "ValidRequestRule" ;
+  swrl:body [
+    rdf:type swrl:AtomList ;
+    rdf:first [
+      rdf:type swrl:ClassAtom ;
+      swrl:classPredicate :ЗапросНаКредит ;
+      swrl:argument1 :request
+    ] ;
+    rdf:rest [
+      rdf:type swrl:AtomList ;
+      rdf:first [
+        rdf:type swrl:DatavaluedPropertyAtom ;
+        swrl:propertyPredicate :имеет_заемщика ;
+        swrl:argument1 :request ;
+        swrl:argument2 :borrower
+      ] ;
+      rdf:rest [
+        rdf:type swrl:AtomList ;
+        rdf:first [
+          rdf:type swrl:ClassAtom ;
+          swrl:classPredicate :Заемщик ;
+          swrl:argument1 :borrower
+        ] ;
+        rdf:rest [
+          rdf:type swrl:AtomList ;
+          rdf:first [
+            rdf:type swrl:DatavaluedPropertyAtom ;
+            swrl:propertyPredicate :подает_на_программу ;
+            swrl:argument1 :borrower ;
+            swrl:argument2 :program
+          ] ;
+          rdf:rest [
+            rdf:type swrl:AtomList ;
+            rdf:first [
+              rdf:type swrl:ClassAtom ;
+              swrl:classPredicate :КредитнаяПрограмма ;
+              swrl:argument1 :program
+            ] ;
+            rdf:rest [
+              rdf:type swrl:AtomList ;
+              rdf:first [
+                rdf:type swrl:DatavaluedPropertyAtom ;
+                swrl:propertyPredicate :включает ;
+                swrl:argument1 :program ;
+                swrl:argument2 :criteria
+              ] ;
+              rdf:rest [
+                rdf:type swrl:AtomList ;
+                rdf:first [
+                  rdf:type swrl:ClassAtom ;
+                  swrl:classPredicate :КритерийОценки ;
+                  swrl:argument1 :criteria
+                ] ;
+                rdf:rest [
+                  rdf:type swrl:AtomList ;
+                  rdf:first [
+                    rdf:type swrl:DatavaluedPropertyAtom ;
+                    swrl:propertyPredicate :включает ;
+                    swrl:argument1 :criteria ;
+                    swrl:argument2 :indicator
+                  ] ;
+                  rdf:rest [
+                    rdf:type swrl:AtomList ;
+                    rdf:first [
+                      rdf:type swrl:ClassAtom ;
+                      swrl:classPredicate :ОценочныйИндикатор ;
+                      swrl:argument1 :indicator
+                    ] ;
+                    rdf:rest [
+                      rdf:type swrl:AtomList ;
+                      rdf:first [
+                        rdf:type swrl:DatavaluedPropertyAtom ;
+                        swrl:propertyPredicate :обращается_к ;
+                        swrl:argument1 :request ;
+                        swrl:argument2 :indicator
+                      ] ;
+                      rdf:rest [
+                        rdf:type swrl:AtomList ;
+                        rdf:first [
+                          rdf:type swrl:DatavaluedPropertyAtom ;
+                          swrl:propertyPredicate :имеет_credit_score ;
+                          swrl:argument1 :borrower ;
+                          swrl:argument2 :credit_score
+                        ] ;
+                        rdf:rest [
+                          rdf:type swrl:AtomList ;
+                          rdf:first [
+                            rdf:type swrl:DatavaluedPropertyAtom ;
+                            swrl:propertyPredicate :имеет_dti_ratio ;
+                            swrl:argument1 :borrower ;
+                            swrl:argument2 :dti_ratio
+                          ] ;
+                          rdf:rest [
+                            rdf:type swrl:AtomList ;
+                            rdf:first [
+                              rdf:type swrl:DatavaluedPropertyAtom ;
+                              swrl:propertyPredicate :имеет_employment_status ;
+                              swrl:argument1 :borrower ;
+                              swrl:argument2 :employment
+                            ] ;
+                            rdf:rest rdf:nil
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]
+  ] ;
+  swrl:head [
+    rdf:type swrl:AtomList ;
+    rdf:first [
+      rdf:type swrl:ClassAtom ;
+      swrl:classPredicate :ВалидныйЗапрос ;
+      swrl:argument1 :request
+    ] ;
+    rdf:rest rdf:nil
+  ]
+] .
